@@ -77,15 +77,21 @@ The app is **admin-driven**: the admin publishes tournaments, schedules matches,
 
 
 
+
+
 <div align="center">
 
 | Login | Matches | Tournament | Teams |
 |:-----:|:-------:|:-----------:|:-----:|
-| ![Login](https://via.placeholder.com/180x360/1B5E20/ffffff?text=Login) | ![Matches](https://via.placeholder.com/180x360/1B5E20/ffffff?text=Matches) | ![Tournaments](https://via.placeholder.com/180x360/1B5E20/ffffff?text=Tournaments) | ![Teams](https://via.placeholder.com/180x360/1B5E20/ffffff?text=Teams) |
+| ![Login](screenshots/Login.png) | ![Matches](screenshots/matches.png) | ![Tournaments](screenshots/tournaments.png) | ![Teams](screenshots/teams.png) | 
 
-| Wallet | Betting | Admin Panel | Profile |
-|:-----:|:-------:|:-----------:|:-------:|
-| ![Wallet](https://via.placeholder.com/180x360/1B5E20/ffffff?text=Wallet) | ![Betting](https://via.placeholder.com/180x360/1B5E20/ffffff?text=Betting) | ![Admin](https://via.placeholder.com/180x360/1B5E20/ffffff?text=Admin) | ![Profile](https://via.placeholder.com/180x360/1B5E20/ffffff?text=Profile) |
+| Wallet | Betting | Admin Panel | 
+|:-----:|:-------:|:-----------:|
+| ![Wallet](screenshots/wallet.png) | ![Betting](screenshots/betting.png) | ![Admin](screenshots/admin_pannel.png) |
+
+| Profile | Home |
+|:-------:|:-------:|
+| ![Profile](screenshots/profile.png) | ![Home](screenshots/Home.png) |
 
 </div>
 
@@ -215,7 +221,7 @@ class AppSecrets {
 ```
 
 > **Gmail tip:** enable **2-Step Verification** and create an
-> [App Password](https://support.google.com/accounts/answer/185833) — the normal
+> [App Password](https://support.google.com/accounts/answer/185833) the normal
 > account password will not work with SMTP.
 
 ### 6. Run the app
@@ -328,13 +334,13 @@ Contributions make the JC Sports Hub community stronger. Please follow these ste
 
 This project is developed for **Makerere University Jinja Campus** as an internal community project.
 
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more information (add one if you plan to open-source).
+
 
 ---
 
 <div align="center">
 
-**JC Sports Hub** — Built with 💚 by **[Drake Wanswa](https://github.com/)** · For the students of Makerere University Jinja Campus
+**JC Sports Hub** — Built with Love by **[Drake Wanswa](https://github.com/)** · For the students of Makerere University Jinja Campus
 
 [↑ Back to top](#-jc-sports-hub)
 
