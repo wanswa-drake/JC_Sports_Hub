@@ -110,14 +110,10 @@ Do not share this code with anyone.
     }
   }
 
-  // Verifies the OTP code the user typed. `markUserVerified` is true during
-  // signup (also flips the user's isVerified flag); it is false during the
-  // forgot-password flow, when the OTP is stored under a synthetic id that
-  // has no users document to update.
+  // Verifies the OTP code the user typed.
   Future<Map<String, dynamic>> verifyOtp({
     required String userId,
     required String enteredCode,
-    bool markUserVerified = true,
   }) async {
     try {
       DocumentSnapshot doc =
@@ -154,23 +150,25 @@ Do not share this code with anyone.
         };
       }
 
-      // All checks passed - mark OTP as used
+      // The OTP document is the verification record. This avoids depending
+      // on a separately deployed users rule during the login verification
+      // flow.
       await _firestore.collection('otps').doc(userId).update({
         'verified': true,
+        'verifiedAt': FieldValue.serverTimestamp(),
       });
-
-      // Mark user as verified in users collection (only meaningful during
-      // signup - the forgot-password flow stores the code under a synthetic
-      // id that is not a real users document).
-      if (markUserVerified) {
-        await _firestore.collection('users').doc(userId).update({
-          'isVerified': true,
-        });
-      }
 
       return {
         'success': true,
         'message': 'Email verified successfully!',
+      };
+    } on FirebaseException catch (e) {
+      debugPrint('===== Verify OTP Exception =====');
+      debugPrint('${e.code}: ${e.message}');
+      debugPrint('================================');
+      return {
+        'success': false,
+        'message': 'Verification failed (${e.code}). Please try again.',
       };
     } catch (e) {
       debugPrint('===== Verify OTP Exception =====');

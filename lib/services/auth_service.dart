@@ -96,10 +96,24 @@ class AuthService {
 
         if (userDoc.exists) {
           Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
-          final isVerified = data['isVerified'] == true;
+          var isVerified = data['isVerified'] == true;
+          if (!isVerified) {
+            final otpDoc =
+                await _firestore.collection('otps').doc(user.uid).get();
+            final otpData = otpDoc.data();
+            isVerified = otpData != null && otpData['verified'] == true;
+          }
+          if (!isVerified) {
+            final verifiedOtp = await _firestore
+                .collection('otps')
+                .where('email', isEqualTo: data['email'] ?? email)
+                .where('verified', isEqualTo: true)
+                .limit(1)
+                .get();
+            isVerified = verifiedOtp.docs.isNotEmpty;
+          }
 
           if (!isVerified) {
-            await _auth.signOut();
             return {
               'success': false,
               'needVerification': true,
@@ -369,7 +383,6 @@ class AuthService {
     final result = await _otpService.verifyOtp(
       userId: userId,
       enteredCode: code,
-      markUserVerified: false,
     );
     if (result['success'] == true) {
       await _firestore.collection('otps').doc(userId).update({

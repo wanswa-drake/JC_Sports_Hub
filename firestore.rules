@@ -10,7 +10,7 @@ service cloud.firestore {
       // Owner manages their own profile AND wallet figure (bets deduct the
       // balance, a withdrawal request moves it to pendingWithdrawal, balance
       // updates on a bet win), so those fields update in-app for the owner.
-      allow update: if (owner(uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName', 'momoNumber', 'profileImage', 'avatar', 'walletBalance', 'pendingWithdrawal']))
+      allow update: if (owner(uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName', 'momoNumber', 'profileImage', 'avatar', 'walletBalance', 'pendingWithdrawal', 'isVerified', 'fcmTokens']))
         // Admin also moves these figures when confirming/rejecting a deposit
         // or withdrawal request.
         || (admin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['walletBalance', 'pendingWithdrawal']));
@@ -46,7 +46,11 @@ service cloud.firestore {
       allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
       allow delete: if admin() || owner(resource.data.userId);
     }
-    match /notifications/{id} { allow read, update: if owner(resource.data.userId); }
+    match /notifications/{id} {
+      allow read, update: if owner(resource.data.userId);
+      allow create: if admin()
+        || (signedIn() && request.resource.data.userId == request.auth.uid);
+    }
     match /suggestions/{id} { allow create: if signedIn() && request.resource.data.userId == request.auth.uid; allow read, update: if admin(); }
     match /teams/{id} {
       allow read: if signedIn();

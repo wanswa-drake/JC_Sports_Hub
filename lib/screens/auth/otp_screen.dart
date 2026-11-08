@@ -110,6 +110,17 @@ class _OtpScreenState extends State<OtpScreen> {
 
   // Called when user types in any OTP box
   void _onOtpChanged(String value, int index) {
+    if (value.length > 1) {
+      final pastedCode =
+          value.length > 6 ? value.substring(0, 6) : value;
+      for (var i = 0; i < _controllers.length; i++) {
+        _controllers[i].text =
+            i < pastedCode.length ? pastedCode[i] : '';
+      }
+      _focusNodes[5].requestFocus();
+      return;
+    }
+
     if (value.length == 1 && index < 5) {
       // If a digit was entered and we're not on the last box,
       // automatically move focus to the next box
@@ -121,14 +132,12 @@ class _OtpScreenState extends State<OtpScreen> {
       _focusNodes[index - 1].requestFocus();
     }
 
-    // Auto-submit when all 6 digits are filled
-    if (_otpCode.length == 6) {
-      _verifyOtp();
-    }
   }
 
   // Verifies the entered OTP code
   void _verifyOtp() async {
+    if (_isLoading) return;
+
     if (_otpCode.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -151,6 +160,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
     if (mounted) {
       if (result['success']) {
+        await FirebaseAuth.instance.signOut();
+        if (!mounted) return;
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -464,10 +475,13 @@ class _OtpScreenState extends State<OtpScreen> {
         textAlign: TextAlign.center,
         // keyboardType.number shows numeric keyboard on phone
         keyboardType: TextInputType.number,
-        // maxLength limits input to 1 character
-        maxLength: 1,
+        obscureText: false,
+        enableSuggestions: false,
+        autocorrect: false,
+        // Allows a complete code to be pasted into any box.
+        maxLength: 6,
         style: const TextStyle(
-          fontSize: AppSizes.fontXL,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
           color: AppColors.dark,
         ),

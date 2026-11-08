@@ -20,6 +20,11 @@ import 'screens/tournaments/tournaments_screen.dart';
 final GlobalKey<ScaffoldMessengerState> appMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -49,6 +54,9 @@ Future<void> main() async {
     }
   }
 
+  FirebaseMessaging.onBackgroundMessage(
+    _firebaseMessagingBackgroundHandler,
+  );
   _setupPushNotifications();
 
   runApp(const MyApp());
@@ -78,7 +86,9 @@ Future<void> _setupPushNotifications() async {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
-          .set({'fcm_token': token}, SetOptions(merge: true));
+          .set({
+            'fcmTokens': FieldValue.arrayUnion([token]),
+          }, SetOptions(merge: true));
     }
 
     await saveToken(await messaging.getToken());

@@ -86,8 +86,14 @@ class _SplashScreenState extends State<SplashScreen>
         if (userDoc.exists) {
           Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
           final firebaseVerified = currentUser.emailVerified == true;
-          final firestoreVerified = data['isVerified'] == true;
-          final isVerified = firebaseVerified || firestoreVerified;
+          var isVerified = firebaseVerified || data['isVerified'] == true;
+          if (!isVerified) {
+            final otpDoc = await FirebaseFirestore.instance
+                .collection('otps')
+                .doc(currentUser.uid)
+                .get();
+            isVerified = otpDoc.data()?['verified'] == true;
+          }
 
           if (!mounted) return;
 

@@ -135,8 +135,15 @@ class _HomeScreenState extends State<HomeScreen> {
         final data = doc.data() as Map<String, dynamic>;
         _isGuest = data['userType'] == 'guest';
         _userType = (data['userType'] ?? '') as String;
-        final isVerified =
+        var isVerified =
             data['isVerified'] == true || user.emailVerified == true;
+        if (!isVerified) {
+          final otpDoc = await FirebaseFirestore.instance
+              .collection('otps')
+              .doc(user.uid)
+              .get();
+          isVerified = otpDoc.data()?['verified'] == true;
+        }
         if (!isVerified && mounted) {
           Navigator.pushReplacementNamed(
             context,
